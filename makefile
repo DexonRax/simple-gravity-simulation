@@ -1,23 +1,28 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -I.
+CXXFLAGS = -std=c++17 -Wall -Iinclude
 
 LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
 
-SRCS = main.cpp Planet.cpp Simulation.cpp Vector2.cpp
-OBJS = $(SRCS:.cpp=.o)
+SRC_DIR = src
+OBJ_DIR = build
+BIN_DIR = bin
+TARGET = $(BIN_DIR)/GravitySim
 
-TARGET = GravitySim
+SRCS = $(wildcard $(SRC_DIR)/*.cpp)
+OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRCS))
 
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
+	@mkdir -p $(BIN_DIR)
 	$(CXX) -o $@ $^ $(LDFLAGS)
 
-%.o: %.cpp
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(OBJ_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -rf $(OBJ_DIR) $(BIN_DIR)
 
 run: all
 	@cp -r assets ./ 2>/dev/null || true
